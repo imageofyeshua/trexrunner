@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using TrexRunner.Graphics;
 
 namespace TrexRunner;
 
@@ -62,7 +63,9 @@ public class TrexRunnerGame : Game
 
         _spriteBatch.Begin();
 
-        _spriteBatch.Draw(_spriteSheetTexture, new Vector2(10, 10), Color.White);
+        Sprite trexSprite = new Sprite(_spriteSheetTexture, 848, 0, 44, 52);
+
+        trexSprite.Draw(_spriteBatch, new Vector2(20, 20));
 
         _spriteBatch.End();
 
