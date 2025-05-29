@@ -14,6 +14,12 @@ public class TrexRunnerGame : Game
     private const string ASSET_NAME_SFX_SCORE_REACHED = "score-reached";
     private const string ASSET_NAME_SFX_BUTTON_PRESS = "button-press";
 
+    public const int WINDOW_WIDTH = 600;
+    public const int WINDOW_HEIGHT = 150;
+
+    public const int TREX_START_POS_X = 1;
+    public const int TREX_START_POS_Y = WINDOW_HEIGHT - 16;
+
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
@@ -37,6 +43,10 @@ public class TrexRunnerGame : Game
         // TODO: Add your initialization logic here
 
         base.Initialize();
+
+        _graphics.PreferredBackBufferWidth = WINDOW_WIDTH;
+        _graphics.PreferredBackBufferHeight = WINDOW_HEIGHT;
+        _graphics.ApplyChanges();
     }
 
     protected override void LoadContent()
@@ -49,7 +59,7 @@ public class TrexRunnerGame : Game
 
         _spriteSheetTexture = Content.Load<Texture2D>(ASSET_NAME_SPRITESHEET);
 
-        _trex = new Trex(_spriteSheetTexture, new Vector2(20, 20));
+        _trex = new Trex(_spriteSheetTexture, new Vector2(TREX_START_POS_X, TREX_START_POS_Y - Trex.TREX_DEFAULT_SPRITE_HEIGHT));
     }
 
     protected override void Update(GameTime gameTime)
@@ -64,7 +74,7 @@ public class TrexRunnerGame : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.CornflowerBlue);
+        GraphicsDevice.Clear(Color.White);
 
         _spriteBatch.Begin();
 
