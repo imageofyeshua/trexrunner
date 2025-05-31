@@ -71,6 +71,7 @@ public class TrexRunnerGame : Game
         // TODO: Add your update logic here
 
         base.Update(gameTime);
+        _trex.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
