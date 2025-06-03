@@ -8,8 +8,12 @@ namespace TrexRunner.Entities;
 
 public class Trex : IGameEntity
 {
+    private const float MIN_JUMP_HEIGHT = 40f;
+
     private const float GRAVITY = 1600f;
     private const float JUMP_START_VELOCITY = -480f;
+
+    private const float CANCEL_JUMP_VELOCITY = -100f;
 
     private const int TREX_IDLE_BACKGROUND_SPRITE_POS_X = 40;
     private const int TREX_IDLE_BACKGROUND_SPRITE_POS_Y = 0;
@@ -96,6 +100,9 @@ public class Trex : IGameEntity
             Position = new Vector2(Position.X, Position.Y + _verticalVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds);
             _verticalVelocity += GRAVITY * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            if (_verticalVelocity >= 0)
+                State = TrexState.Falling;
+
             if (Position.Y >= _startPosY)
             {
                 Position = new Vector2(Position.X, _startPosY);
@@ -131,8 +138,13 @@ public class Trex : IGameEntity
         return true;
     }
 
-    public bool ContinueJump()
+    public bool CancelJump()
     {
+        if (State != TrexState.Jumping || (_startPosY - Position.Y) < MIN_JUMP_HEIGHT)
+            return false;
+        State = TrexState.Falling;
+        _verticalVelocity = _verticalVelocity < CANCEL_JUMP_VELOCITY ? CANCEL_JUMP_VELOCITY : 0;
+
         return true;
     }
 }

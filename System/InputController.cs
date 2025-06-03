@@ -23,12 +23,15 @@ public class InputController
     {
         KeyboardState newKeyboardState = Keyboard.GetState();
 
-        if (!_previousKeyboardState.IsKeyDown(Keys.Up) && newKeyboardState.IsKeyDown(Keys.Up))
+        if (!_previousKeyboardState.IsKeyDown(Keys.Up)
+            && newKeyboardState.IsKeyDown(Keys.Up))
         {
             if (_trex.State != TrexState.Jumping)
                 _trex.BeginJump();
-            else
-                _trex.ContinueJump();
+        }
+        else if (_trex.State == TrexState.Jumping && !newKeyboardState.IsKeyDown(Keys.Up))
+        {
+            _trex.CancelJump();
         }
 
         _previousKeyboardState = newKeyboardState;
