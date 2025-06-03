@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using TrexRunner.Entities;
 using TrexRunner.Graphics;
+using TrexRunner.System;
 
 namespace TrexRunner;
 
@@ -30,6 +31,8 @@ public class TrexRunnerGame : Game
     private Texture2D _spriteSheetTexture;
 
     private Trex _trex;
+
+    private InputController _inputController;
 
     public TrexRunnerGame()
     {
@@ -59,8 +62,8 @@ public class TrexRunnerGame : Game
 
         _spriteSheetTexture = Content.Load<Texture2D>(ASSET_NAME_SPRITESHEET);
 
-        _trex = new Trex(_spriteSheetTexture, new Vector2(TREX_START_POS_X, TREX_START_POS_Y - Trex.TREX_DEFAULT_SPRITE_HEIGHT));
-
+        _trex = new Trex(_spriteSheetTexture, new Vector2(TREX_START_POS_X, TREX_START_POS_Y - Trex.TREX_DEFAULT_SPRITE_HEIGHT), _sfxButtonPress);
+        _inputController = new InputController(_trex);
     }
 
     protected override void Update(GameTime gameTime)
@@ -71,6 +74,9 @@ public class TrexRunnerGame : Game
         // TODO: Add your update logic here
 
         base.Update(gameTime);
+
+        _inputController.ProcessControls(gameTime);
+
         _trex.Update(gameTime);
     }
 
