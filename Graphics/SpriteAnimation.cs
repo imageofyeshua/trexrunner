@@ -93,4 +93,9 @@ public class SpriteAnimation
         return _frames[index];
     }
 
+    public void Clear()
+    {
+        Stop();
+        _frames.Clear();
+    }
 }

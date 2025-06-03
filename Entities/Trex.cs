@@ -8,6 +8,9 @@ namespace TrexRunner.Entities;
 
 public class Trex : IGameEntity
 {
+    private const float GRAVITY = 1600f;
+    private const float JUMP_START_VELOCITY = -480f;
+
     private const int TREX_IDLE_BACKGROUND_SPRITE_POS_X = 40;
     private const int TREX_IDLE_BACKGROUND_SPRITE_POS_Y = 0;
 
@@ -31,6 +34,10 @@ public class Trex : IGameEntity
 
     private Random _random;
 
+    private float _verticalVelocity;
+
+    private float _startPosY;
+
     public TrexState State { get; private set; }
     public Vector2 Position { get; set; }
     public bool IsAlive { get; private set; }
@@ -50,8 +57,12 @@ public class Trex : IGameEntity
         _idleSprite = new Sprite(spriteSheet, TREX_DEFAULT_SPRITE_POS_X, TREX_DEFAULT_SPRITE_POS_Y, TREX_DEFAULT_SPRITE_WIDTH, TREX_DEFAULT_SPRITE_HEIGHT);
         _idleBlinkSprite = new Sprite(spriteSheet, TREX_DEFAULT_SPRITE_POS_X + TREX_DEFAULT_SPRITE_WIDTH, TREX_DEFAULT_SPRITE_POS_Y, TREX_DEFAULT_SPRITE_WIDTH, TREX_DEFAULT_SPRITE_HEIGHT);
 
+        _blinkAnimation = new SpriteAnimation();
         CreateBlinkAnimation();
+
         _blinkAnimation.Play();
+
+        _startPosY = position.Y;
     }
 
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -60,6 +71,10 @@ public class Trex : IGameEntity
         {
             _idleTrexBackgroundSprite.Draw(spriteBatch, Position);
             _blinkAnimation.Draw(spriteBatch, Position);
+        }
+        else if (State == TrexState.Jumping || State == TrexState.Falling)
+        {
+            _idleSprite.Draw(spriteBatch, Position);
         }
 
     }
@@ -76,11 +91,23 @@ public class Trex : IGameEntity
 
             _blinkAnimation.Update(gameTime);
         }
+        else if (State == TrexState.Jumping || State == TrexState.Falling)
+        {
+            Position = new Vector2(Position.X, Position.Y + _verticalVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds);
+            _verticalVelocity += GRAVITY * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (Position.Y >= _startPosY)
+            {
+                Position = new Vector2(Position.X, _startPosY);
+                _verticalVelocity = 0;
+                State = TrexState.Idle;
+            }
+        }
     }
 
     private void CreateBlinkAnimation()
     {
-        _blinkAnimation = new SpriteAnimation();
+        _blinkAnimation.Clear();
         _blinkAnimation.ShouldLoop = false;
 
         double blinkTimeStamp = BLINK_ANIMATION_RANDOM_MIN + _random.NextDouble() * (BLINK_ANIMATION_RANDOM_MAX - BLINK_ANIMATION_RANDOM_MIN);
@@ -96,6 +123,10 @@ public class Trex : IGameEntity
             return false;
 
         _jumpSound.Play();
+
+        State = TrexState.Jumping;
+
+        _verticalVelocity = JUMP_START_VELOCITY;
 
         return true;
     }
